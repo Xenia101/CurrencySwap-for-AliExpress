@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AliExpress 환율 변환기</title>
+    <link href="css/tailwind.min.css" rel="stylesheet" />
+    <link href="css/flowbite.min.css" rel="stylesheet" />
+    <link href="css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-100 text-gray-800 p-5 text-sm rounded-lg">
+    <div class="max-w-sm mx-auto">
+        <div class="mb-5">
+            <!-- <div class="flex items-center justify-center p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow"> -->
+                <div class="flex items-center justify-center w-full">
+                    <img src="./icons/icon128.png" alt="AliExpress 환율 변환기" class="h-10">
+                    <h1 class="ml-2 text-lg font-semibold text-gray-900">AliExpress 환율 변환기</h1>
+                </div>
+                <!-- <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="extensionToggle" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label> -->
+            <!-- </div> -->
+        </div>
+                
+        <div class="mb-5">
+            <div class="p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-exchange-alt text-blue-600 text-lg mr-3"></i>
+                    <h5 class="text-lg font-semibold text-gray-900">환율 정보</h5>
+                </div>
+                <div class="rate-info bg-gradient-to-r from-blue-100 to-blue-50 p-4 mb-5 rounded-lg border-l-4 border-blue-500 shadow-sm">
+                    <div class="flex flex-col">
+                        <p class="text-xs text-gray-700 font-medium mb-1">현재 적용 환율</p>
+                        <div class="flex items-center justify-center bg-white rounded-lg px-4 py-2 shadow-sm">
+                            <span id="currentRate" class="text-lg font-bold text-blue-700 flex items-baseline">
+                                <span class="red-rate">1</span>
+                                <span class="text-xs text-gray-500 ml-1 mr-2">USD</span>
+                                <span class="text-gray-500">=</span>
+                                <span class="text-xl ml-2 red-rate">1,000</span>
+                                <span class="text-xs text-gray-500 ml-1">KRW</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-2 text-gray-700 flex items-center">
+                        <i class="fas fa-sync-alt text-blue-500 mr-2"></i>
+                        업데이트 주기:
+                    </label>
+                    <select id="rateUpdateInterval" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <option value="0" selected>자동 업데이트X</option>
+                        <option value="360">6시간</option>
+                        <option value="720">12시간</option>
+                    </select>
+                </div>
+                    <button id="updateRateNow" type="button" class="flex items-center justify-center text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 w-full text-center transition-colors mb-2">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                    지금 환율 업데이트
+                </button>
+                <p class="text-center text-xs text-gray-400 flex items-center justify-center mt-4">
+                    <i class="fas fa-clock text-gray-400 mr-1"></i>
+                    마지막 업데이트: <span id="lastUpdate" class="ml-1">0000-00-00 00:00</span>
+                </p>
+            </div>
+        </div>
+        
+        <div class="mb-5">
+            <div class="p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-palette text-blue-600 text-lg mr-3"></i>
+                    <h5 class="text-lg font-semibold text-gray-900">디스플레이 설정</h5>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                    <div class="mb-4">
+                        <label class="block mb-2 text-gray-700 flex items-center">
+                            <i class="fas fa-text-height text-blue-500 mr-2"></i>
+                            글자 크기:
+                        </label>
+                        <select id="fontSize" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4">
+                            <option value="small">작음</option>
+                            <option value="medium" selected>보통</option>
+                            <option value="large">큼</option>
+                        </select>
+                    </div>
+                
+                    <div class="mb-4">
+                        <label class="block mb-2 text-gray-700 flex items-center">
+                            <i class="fas fa-font text-blue-500 mr-2"></i>
+                            글자 색상:
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <input type="color" id="textColorPicker" class="h-10 w-10 rounded bg-white p-0 border border-gray-300 cursor-pointer" value="#ffffff">
+                            <input type="text" id="textColorInput" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 flex-1" placeholder="#ffffff" value="#ffffff">
+                        </div>
+                    </div>
+                
+                    <div>
+                        <label class="block mb-2 text-gray-700 flex items-center">
+                            <i class="fas fa-fill-drip text-blue-500 mr-2"></i>
+                            배경 색상:
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <input type="color" id="bgColorPicker" class="h-10 w-10 rounded bg-white p-0 border border-gray-300 cursor-pointer" value="#ff4747">
+                            <input type="text" id="bgColorInput" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 flex-1" placeholder="#ff4747" value="#ff4747">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-blue-50 rounded-lg mb-3">
+                    <p class="text-center text-sm text-gray-600 mb-2">
+                        <i class="fas fa-eye text-blue-500 mr-1"></i>
+                        미리보기
+                    </p>
+                    <div class="flex justify-center">
+                        <div class="preview-box" style="background-color: #ff4747; color: #ffffff; padding: 8px 12px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                            <span class="font-bold">￦ 12,350</span>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-gray-500 mt-2">
+                        실제 사이트에서 표시되는 모습입니다
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <button id="resetSettings" type="button" class="flex items-center justify-center focus:outline-none text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 w-full transition-colors">
+            <i class="fas fa-redo-alt mr-2"></i>
+            설정 초기화
+        </button>
+        
+        <!-- 확인 모달 -->
+        <div id="resetConfirmModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] h-full bg-gray-900/50 backdrop-blur-sm transition-opacity duration-300">
+            <div class="relative w-full max-w-md max-h-full mx-auto mt-10 transform transition-transform duration-300 ease-out translate-y-4 opacity-0">
+                <div class="relative bg-white rounded-lg shadow-lg border border-gray-200">
+                    <button type="button" id="closeModal" class="absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex items-center justify-center transition-colors">
+                        <i class="fas fa-times"></i>
+                        <span class="sr-only">모달 닫기</span>
+                    </button>
+                    <div class="p-5 md:p-6 text-center">
+                        <div class="mx-auto flex items-center justify-center w-14 h-14 rounded-full bg-red-100 mb-4">
+                            <i class="fas fa-exclamation-circle text-2xl text-red-500"></i>
+                        </div>
+                        <h3 class="mb-5 text-md font-medium text-gray-800">모든 설정을 기본값으로 초기화하시겠습니까?</h3>
+                        <!-- <p class="mb-5 text-sm text-gray-500">이 작업은 되돌릴 수 없으며 모든 사용자 지정 설정이 재설정됩니다.</p> -->
+                        <div class="flex flex-col space-y-2 sm:flex-row-reverse sm:space-y-0 sm:space-x-2 sm:space-x-reverse">
+                            <button id="resetConfirmYes" type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center justify-center transition-colors">
+                                <i class="fas fa-check mr-2"></i>
+                                예, 초기화합니다
+                            </button>
+                            <button id="resetConfirmNo" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 inline-flex items-center justify-center transition-colors">
+                                <i class="fas fa-times mr-2"></i>
+                                아니오
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3 mt-3">
+            <div class="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg shadow-sm">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-info-circle text-yellow-500 mt-0.5"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">사용자 안내</h3>
+                        <div class="mt-1 text-xs text-yellow-700">
+                            <p>본 확장 프로그램은 사용자 편의성을 위한 상품 가격의 대략적인 환율 참고용입니다. 실제 결제 시에는 알리익스프레스에서 제공하는 공식 가격을 확인해주세요.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="mt-5 text-center text-xs text-gray-500">
+            <p>AliExpress 환율 변환기 v1.1</p>
+            <p>© 2025 - Powered by <a href="https://github.com/Xenia101" target="_blank" class="text-blue-500 hover:text-blue-600">Junnie</a></p>
+        </footer>
+    </div>
+    
+    <script src="js/popup.js"></script>
+    <script src="js/flowbite.min.js"></script>
+</body>
+</html> 

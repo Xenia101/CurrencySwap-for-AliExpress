@@ -134,3 +134,15 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# chrome extension
+.DS_Store
+.vscode/
+.idea/
+
+# node_modules
+node_modules/
+
+# dist
+dist/
+

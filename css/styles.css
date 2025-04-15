@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 팝업 가격 스타일 - Tailwind가 오버라이드하지 않도록 */
+.price-popup {
+  position: absolute;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 10000;
+  background-color: #ff4747;
+  color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  pointer-events: none; /* 팝업이 마우스 이벤트를 방해하지 않도록 설정 */
+  animation: fadeIn 0.2s ease-in-out;
+  min-width: 60px;
+  text-align: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s, font-size 0.3s;
+}
+
+/* 글자 크기 설정 - 팝업 */
+.price-popup.small {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.price-popup.medium {
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
+.price-popup.large {
+  font-size: 16px;
+  padding: 6px 12px;
+}
+
+/* 달러 및 원화 숫자에 대한 스타일 강조 */
+.price-popup .amount {
+  font-weight: 900;
+}
+
+.red-rate {
+  color: #ff4747;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 
