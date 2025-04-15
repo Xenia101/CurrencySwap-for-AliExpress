@@ -23,7 +23,7 @@
 
 ## 사용 방법
 
-설치 후 AliExpress 사이트(https://ko.aliexpress.com/)를 방문하여 가격 요소 위에 마우스를 올려보세요. "가격" 팝업이 나타납니다.
+설치 후 [AliExpress](https://ko.aliexpress.com)를 방문하여 가격 요소 위에 마우스를 올려보세요. "가격" 팝업이 나타납니다.
 
 ## 설정 옵션
 
