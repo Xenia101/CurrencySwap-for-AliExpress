@@ -2,6 +2,9 @@
 
 이 크롬 익스텐션은 AliExpress 사이트에서 원화와 달러 간의 환율 변환을 제공합니다.
 
+## 배포
+[Chrome WebStore](https://chromewebstore.google.com/detail/%EC%95%8C%EB%A6%AC%EC%9D%B5%EC%8A%A4%ED%94%84%EB%A0%88%EC%8A%A4-%EB%8B%AC%EB%9F%AC-%EC%9B%90%ED%99%94-%EB%B3%80%ED%99%98/ccdmpmjjdlmgaofeldpoocpdckekpina?hl=ko)
+
 ## 기능
 
 - 달러와 원화간 환율 변환 기능
