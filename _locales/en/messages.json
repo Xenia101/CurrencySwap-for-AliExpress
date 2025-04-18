@@ -1,0 +1,122 @@
+{
+  "extName": {
+    "message": "AliExpress USD to KRW Converter",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "AliExpress Currency Converter Extension | USD to KRW",
+    "description": "Extension description"
+  },
+  "title": {
+    "message": "AliExpress Currency Converter",
+    "description": "Extension title"
+  },
+  "languageSettings": {
+    "message": "Language Settings",
+    "description": "Language settings title"
+  },
+  "exchangeRateInfo": {
+    "message": "Exchange Rate Info",
+    "description": "Exchange rate info title"
+  },
+  "currentRate": {
+    "message": "Current Applied Rate",
+    "description": "Currently applied exchange rate"
+  },
+  "updateInterval": {
+    "message": "Update Interval:",
+    "description": "Exchange rate update interval setting"
+  },
+  "noAutoUpdate": {
+    "message": "No Auto Update",
+    "description": "Do not use auto update"
+  },
+  "6hours": {
+    "message": "6 Hours",
+    "description": "Update every 6 hours"
+  },
+  "12hours": {
+    "message": "12 Hours",
+    "description": "Update every 12 hours"
+  },
+  "updateRateNow": {
+    "message": "Update Rate Now",
+    "description": "Update rate now button"
+  },
+  "updating": {
+    "message": "Updating...",
+    "description": "Message during rate update"
+  },
+  "lastUpdate": {
+    "message": "Last Update:",
+    "description": "Last update time"
+  },
+  "displaySettings": {
+    "message": "Display Settings",
+    "description": "Display settings title"
+  },
+  "fontSize": {
+    "message": "Font Size:",
+    "description": "Font size setting"
+  },
+  "small": {
+    "message": "Small",
+    "description": "Small font size"
+  },
+  "medium": {
+    "message": "Medium",
+    "description": "Medium font size"
+  },
+  "large": {
+    "message": "Large",
+    "description": "Large font size"
+  },
+  "textColor": {
+    "message": "Text Color:",
+    "description": "Text color setting"
+  },
+  "bgColor": {
+    "message": "Background Color:",
+    "description": "Background color setting"
+  },
+  "preview": {
+    "message": "Preview",
+    "description": "Preview title"
+  },
+  "previewDesc": {
+    "message": "This is how it will appear on the site",
+    "description": "Preview description"
+  },
+  "resetSettings": {
+    "message": "Reset Settings",
+    "description": "Reset settings button"
+  },
+  "closeModal": {
+    "message": "Close Modal",
+    "description": "Close modal button"
+  },
+  "resetConfirmMessage": {
+    "message": "Do you want to reset all settings to default?",
+    "description": "Reset settings confirmation message"
+  },
+  "resetConfirmYes": {
+    "message": "Yes, Reset",
+    "description": "Reset confirmation yes"
+  },
+  "resetConfirmNo": {
+    "message": "No",
+    "description": "Reset confirmation no"
+  },
+  "userGuide": {
+    "message": "User Guide",
+    "description": "User guide title"
+  },
+  "userGuideText": {
+    "message": "This extension is for reference purposes only, providing approximate exchange rates for product prices. Please check the official prices provided by AliExpress when making actual payments.",
+    "description": "User guide content"
+  },
+  "footerTitle": {
+    "message": "Currency Converter",
+    "description": "Footer title"
+  }
+} 

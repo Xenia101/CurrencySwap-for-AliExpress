@@ -10,6 +10,7 @@
 - 달러와 원화간 환율 변환 기능
 - AliExpress 사이트에서 상품 가격을 자동으로 변환
 - 가격 위에 마우스를 올리면 "가격" 텍스트가 포함된 팝업을 표시
+- 한국어와 영어 다국어 지원
 
 <p style="display: flex; gap: 10px;">
     <img style="width: 300px; height: auto" src="./images/CurrencySwap-for-AliExpress-image_4.png" style="max-width: 48%;">
@@ -35,6 +36,15 @@
 - 텍스트 색상 및 배경 색상 설정
 - 글자 크기 조정
 - 미리보기 영역
+- 언어 설정 (한국어/영어)
+
+## 다국어 지원
+
+이 확장 프로그램은 Chrome의 i18n API를 사용하여 다국어를 지원합니다. 현재 지원되는 언어:
+- 한국어 (기본)
+- 영어
+
+언어는 확장 프로그램 팝업 상단의 '언어 설정' 섹션에서 변경할 수 있습니다.
 
 ## 정보
 

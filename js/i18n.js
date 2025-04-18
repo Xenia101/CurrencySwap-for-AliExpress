@@ -1,5 +1,32 @@
-// 다국어 지원을 위한 번역 데이터
-const translations = {
+// Chrome 확장 프로그램 i18n API를 사용하는 다국어 지원
+
+// 현재 언어 설정 가져오기
+function getCurrentLanguage() {
+    return localStorage.getItem('language') || chrome.i18n.getUILanguage().split('-')[0] || 'ko'; // 기본값은 한국어
+}
+
+// 언어 설정 저장하기
+function setLanguage(lang) {
+    localStorage.setItem('language', lang);
+    applyTranslations();
+}
+
+// Chrome i18n API를 사용하여 메시지 가져오기
+function getMessage(messageName) {
+    const userLang = getCurrentLanguage();
+    // 사용자가 선택한 언어와 chrome.i18n의 언어가 다른 경우, 미리 정의된 번역 사용
+    if ((userLang === 'ko' && chrome.i18n.getUILanguage().startsWith('en')) || 
+        (userLang === 'en' && !chrome.i18n.getUILanguage().startsWith('en'))) {
+        return getLegacyMessage(messageName);
+    }
+    
+    // Chrome i18n API 사용
+    const message = chrome.i18n.getMessage(messageName);
+    return message || getLegacyMessage(messageName);
+}
+
+// 이전 방식의 번역 시스템 (fallback용)
+const legacyTranslations = {
     'ko': {
         'title': 'AliExpress 환율 변환기',
         'languageSettings': '언어 설정',
@@ -62,31 +89,27 @@ const translations = {
     }
 };
 
-// 현재 언어 설정 가져오기
-function getCurrentLanguage() {
-    return localStorage.getItem('language') || 'ko'; // 기본값은 한국어
-}
-
-// 언어 설정 저장하기
-function setLanguage(lang) {
-    localStorage.setItem('language', lang);
-    applyTranslations();
+// 이전 방식의 번역 메시지 가져오기 (Chrome i18n API가 실패할 경우 대비)
+function getLegacyMessage(messageName) {
+    const lang = getCurrentLanguage();
+    if (legacyTranslations[lang] && legacyTranslations[lang][messageName]) {
+        return legacyTranslations[lang][messageName];
+    }
+    // 없는 경우 영어로 폴백
+    return legacyTranslations['en'][messageName] || messageName;
 }
 
 // 언어 적용하기
 function applyTranslations() {
-    const currentLang = getCurrentLanguage();
     const elements = document.querySelectorAll('[data-i18n]');
     
     elements.forEach(element => {
         const key = element.getAttribute('data-i18n');
-        if (translations[currentLang] && translations[currentLang][key]) {
-            element.textContent = translations[currentLang][key];
-        }
+        element.textContent = getMessage(key);
     });
     
     // HTML lang 속성 업데이트
-    document.documentElement.lang = currentLang;
+    document.documentElement.lang = getCurrentLanguage();
 }
 
 // 언어 선택기 이벤트 리스너 설정
