@@ -79,11 +79,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewBox = document.querySelector('.preview-box');
 
     // 텍스트 색상 변경 이벤트
+    let textColorChangeTimer = null;
     textColorPicker.addEventListener('input', function() {
         const color = this.value;
         textColorInput.value = color;
-        updateColor('text', color);
+        
+        // 미리보기는 즉시 업데이트
         updatePreview();
+        
+        // 설정 저장과 메시지 전송은 디바운스 적용
+        if (textColorChangeTimer) {
+            clearTimeout(textColorChangeTimer);
+        }
+        
+        textColorChangeTimer = setTimeout(() => {
+            updateColor('text', color);
+            textColorChangeTimer = null;
+        }, 300);
     });
 
     textColorInput.addEventListener('input', function() {
@@ -97,17 +109,40 @@ document.addEventListener('DOMContentLoaded', function() {
         // 유효한 색상 코드 확인
         if (/^#([0-9A-F]{3}){1,2}$/i.test(color)) {
             textColorPicker.value = color;
-            updateColor('text', color);
+            
+            // 미리보기는 즉시 업데이트
             updatePreview();
+            
+            // 설정 저장과 메시지 전송은 디바운스 적용
+            if (textColorChangeTimer) {
+                clearTimeout(textColorChangeTimer);
+            }
+            
+            textColorChangeTimer = setTimeout(() => {
+                updateColor('text', color);
+                textColorChangeTimer = null;
+            }, 300);
         }
     });
 
     // 배경 색상 변경 이벤트
+    let bgColorChangeTimer = null;
     bgColorPicker.addEventListener('input', function() {
         const color = this.value;
         bgColorInput.value = color;
-        updateColor('bg', color);
+        
+        // 미리보기는 즉시 업데이트
         updatePreview();
+        
+        // 설정 저장과 메시지 전송은 디바운스 적용
+        if (bgColorChangeTimer) {
+            clearTimeout(bgColorChangeTimer);
+        }
+        
+        bgColorChangeTimer = setTimeout(() => {
+            updateColor('bg', color);
+            bgColorChangeTimer = null;
+        }, 300);
     });
 
     bgColorInput.addEventListener('input', function() {
@@ -121,8 +156,19 @@ document.addEventListener('DOMContentLoaded', function() {
         // 유효한 색상 코드 확인
         if (/^#([0-9A-F]{3}){1,2}$/i.test(color)) {
             bgColorPicker.value = color;
-            updateColor('bg', color);
+            
+            // 미리보기는 즉시 업데이트
             updatePreview();
+            
+            // 설정 저장과 메시지 전송은 디바운스 적용
+            if (bgColorChangeTimer) {
+                clearTimeout(bgColorChangeTimer);
+            }
+            
+            bgColorChangeTimer = setTimeout(() => {
+                updateColor('bg', color);
+                bgColorChangeTimer = null;
+            }, 300);
         }
     });
 
@@ -271,16 +317,29 @@ function updatePreview() {
     }
 }
 
-// 설정 저장
+// 디바운스를 위한 타이머 변수
+let saveSettingsTimer = null;
+
+// 설정 저장 (디바운스 적용)
 function saveSettings(settings) {
-    chrome.storage.sync.get('settings', function(data) {
-        const currentSettings = data.settings || getDefaultSettings();
-        const newSettings = { ...currentSettings, ...settings };
-        
-        chrome.storage.sync.set({ settings: newSettings }, function() {
-            console.log('설정이 저장되었습니다:', newSettings);
+    // 이전 타이머가 있다면 취소
+    if (saveSettingsTimer) {
+        clearTimeout(saveSettingsTimer);
+    }
+    
+    // 300ms 후에 저장 실행
+    saveSettingsTimer = setTimeout(() => {
+        chrome.storage.sync.get('settings', function(data) {
+            const currentSettings = data.settings || getDefaultSettings();
+            const newSettings = { ...currentSettings, ...settings };
+            
+            chrome.storage.sync.set({ settings: newSettings }, function() {
+                console.log('설정이 저장되었습니다:', newSettings);
+            });
         });
-    });
+        
+        saveSettingsTimer = null;
+    }, 300);
 }
 
 // 설정 로드
@@ -516,8 +575,22 @@ function showDomainWarning() {
     document.head.appendChild(style);
 }
 
+// 마지막 환율 업데이트 시간 추적
+let lastRateUpdateTime = 0;
+const RATE_UPDATE_THROTTLE = 5000; // 5초
+
 // 환율 업데이트
 function updateExchangeRate() {
+    // 쓰로틀링 적용 - 마지막 업데이트로부터 지정된 시간이 지나지 않았으면 무시
+    const now = Date.now();
+    if (now - lastRateUpdateTime < RATE_UPDATE_THROTTLE) {
+        console.log('환율 업데이트 요청이 너무 빠릅니다. 잠시 후 다시 시도하세요.');
+        return;
+    }
+    
+    // 업데이트 시간 기록
+    lastRateUpdateTime = now;
+    
     // 업데이트 버튼 비활성화 (중복 클릭 방지)
     const updateBtn = document.getElementById('updateRateNow');
     if (updateBtn) {
@@ -528,7 +601,7 @@ function updateExchangeRate() {
     }
     
     // 현재 시간
-    const now = new Date().toLocaleString();
+    const currentTime = new Date().toLocaleString();
     
     // Exchange Rate API 사용 (USD to KRW)
     fetch('https://api.exchangerate-api.com/v4/latest/USD')
@@ -540,11 +613,11 @@ function updateExchangeRate() {
             // 스토리지에 저장
             chrome.storage.sync.set({
                 exchangeRate: rate,
-                lastUpdate: now
+                lastUpdate: currentTime
             }, function() {
                 // UI 업데이트
                 updateRateDisplay(rate);
-                document.getElementById('lastUpdate').textContent = now;
+                document.getElementById('lastUpdate').textContent = currentTime;
                 
                 // 버튼 다시 활성화
                 if (updateBtn) {
