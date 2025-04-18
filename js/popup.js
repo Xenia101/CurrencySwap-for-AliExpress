@@ -22,6 +22,18 @@ document.addEventListener('DOMContentLoaded', function() {
     //     });
     // });
 
+    // 언어 설정
+    const languageSelector = document.getElementById('languageSelector');
+    languageSelector.addEventListener('change', function() {
+        const selectedLanguage = this.value;
+        saveSettings({ language: selectedLanguage });
+        
+        // i18n 함수 호출 (외부 i18n.js에서 정의된 함수)
+        if (typeof setLanguage === 'function') {
+            setLanguage(selectedLanguage);
+        }
+    });
+
     // 환율 업데이트 주기 설정
     const rateUpdateInterval = document.getElementById('rateUpdateInterval');
     rateUpdateInterval.addEventListener('change', function() {
@@ -247,55 +259,62 @@ function loadSettings() {
         document.getElementById('rateUpdateInterval').value = settings.updateInterval;
         document.getElementById('fontSize').value = settings.fontSize;
         
+        // 언어 설정 업데이트
+        if (settings.language) {
+            document.getElementById('languageSelector').value = settings.language;
+            
+            // i18n 함수 호출 (외부 i18n.js에서 정의된 함수)
+            if (typeof setLanguage === 'function') {
+                setLanguage(settings.language);
+            }
+        }
+        
         // 환율 정보 업데이트
-        document.getElementById('currentRate').innerHTML = `<span class="red-rate">1</span><span class="text-xs text-gray-500 ml-1 mr-2">USD</span><span class="text-gray-500">=</span><span class="text-xl ml-2 red-rate">${Math.floor(exchangeRate).toLocaleString()}</span><span class="text-xs text-gray-500 ml-1">KRW</span>`;
+        updateRateDisplay(exchangeRate);
+        
+        // 마지막 업데이트 시간 업데이트
         document.getElementById('lastUpdate').textContent = lastUpdate;
         
-        // 색상 피커 업데이트
+        // 색상 설정 업데이트
         const textColorPicker = document.getElementById('textColorPicker');
         const textColorInput = document.getElementById('textColorInput');
-        
         const bgColorPicker = document.getElementById('bgColorPicker');
         const bgColorInput = document.getElementById('bgColorInput');
         
         textColorPicker.value = settings.textColor;
         textColorInput.value = settings.textColor;
-        
         bgColorPicker.value = settings.bgColor;
         bgColorInput.value = settings.bgColor;
         
         // 미리보기 업데이트
-        const previewBox = document.querySelector('.preview-box');
-        if (previewBox) {
-            previewBox.style.backgroundColor = settings.bgColor;
-            previewBox.style.color = settings.textColor;
-            
-            // 글자 크기 설정
-            if (settings.fontSize === 'small') {
-                previewBox.style.fontSize = '12px';
-                previewBox.style.padding = '6px 10px';
-            } else if (settings.fontSize === 'medium') {
-                previewBox.style.fontSize = '14px';
-                previewBox.style.padding = '8px 12px';
-            } else if (settings.fontSize === 'large') {
-                previewBox.style.fontSize = '16px';
-                previewBox.style.padding = '10px 14px';
-            }
-        }
+        updatePreview();
         
-        // 자동 환율 업데이트 타이머 설정
+        // 자동 환율 업데이트 설정
         setupAutoRateUpdate(settings.updateInterval);
     });
 }
 
-// 기본 설정
+// 환율 정보 표시 업데이트
+function updateRateDisplay(rate) {
+    const currentRateElement = document.getElementById('currentRate');
+    if (currentRateElement) {
+        const redRateSpans = currentRateElement.querySelectorAll('.red-rate');
+        if (redRateSpans.length >= 2) {
+            redRateSpans[0].textContent = '1';
+            redRateSpans[1].textContent = Math.floor(rate).toLocaleString();
+        }
+    }
+}
+
+// 기본 설정 가져오기
 function getDefaultSettings() {
     return {
         extensionEnabled: true,
-        updateInterval: '0',  // 기본값을 자동 업데이트X로 변경
+        updateInterval: '0', // 자동 업데이트 비활성화
         fontSize: 'medium',
         textColor: '#ffffff',
-        bgColor: '#ff4747'
+        bgColor: '#ff4747',
+        language: 'ko' // 기본 언어를 한국어로 설정
     };
 }
 
@@ -303,7 +322,7 @@ function getDefaultSettings() {
 function resetSettings() {
     const defaultSettings = getDefaultSettings();
     
-    // 저장소에 기본 설정 저장
+    // 설정 초기화
     chrome.storage.sync.set({ settings: defaultSettings }, function() {
         console.log('설정이 초기화되었습니다.');
         
@@ -312,48 +331,38 @@ function resetSettings() {
         document.getElementById('rateUpdateInterval').value = defaultSettings.updateInterval;
         document.getElementById('fontSize').value = defaultSettings.fontSize;
         
-        // 색상 피커 업데이트
+        // 언어 설정 업데이트
+        document.getElementById('languageSelector').value = defaultSettings.language;
+        
+        // i18n 함수 호출 (외부 i18n.js에서 정의된 함수)
+        if (typeof setLanguage === 'function') {
+            setLanguage(defaultSettings.language);
+        }
+        
+        // 색상 설정 초기화
         const textColorPicker = document.getElementById('textColorPicker');
         const textColorInput = document.getElementById('textColorInput');
-        
         const bgColorPicker = document.getElementById('bgColorPicker');
         const bgColorInput = document.getElementById('bgColorInput');
         
         textColorPicker.value = defaultSettings.textColor;
         textColorInput.value = defaultSettings.textColor;
-        
         bgColorPicker.value = defaultSettings.bgColor;
         bgColorInput.value = defaultSettings.bgColor;
         
         // 미리보기 업데이트
-        const previewBox = document.querySelector('.preview-box');
-        if (previewBox) {
-            previewBox.style.backgroundColor = defaultSettings.bgColor;
-            previewBox.style.color = defaultSettings.textColor;
-            
-            // 글자 크기 설정
-            if (defaultSettings.fontSize === 'small') {
-                previewBox.style.fontSize = '12px';
-                previewBox.style.padding = '6px 10px';
-            } else if (defaultSettings.fontSize === 'medium') {
-                previewBox.style.fontSize = '14px';
-                previewBox.style.padding = '8px 12px';
-            } else if (defaultSettings.fontSize === 'large') {
-                previewBox.style.fontSize = '16px';
-                previewBox.style.padding = '10px 14px';
-            }
-        }
+        updatePreview();
         
-        // 타이머 업데이트
-        setupAutoRateUpdate(defaultSettings.updateInterval);
-        
-        // content script에 변경 알림
+        // content script에 메시지 전송
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             chrome.tabs.sendMessage(tabs[0].id, {
                 action: 'resetSettings',
                 settings: defaultSettings
             });
         });
+        
+        // 자동 환율 업데이트 설정
+        setupAutoRateUpdate(defaultSettings.updateInterval);
     });
 }
 
@@ -465,70 +474,72 @@ function showDomainWarning() {
 
 // 환율 업데이트
 function updateExchangeRate() {
-    const button = document.getElementById('updateRateNow');
-    button.disabled = true;
+    // 업데이트 버튼 비활성화 (중복 클릭 방지)
+    const updateBtn = document.getElementById('updateRateNow');
+    if (updateBtn) {
+        updateBtn.disabled = true;
+        updateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        // 로딩 애니메이션 추가
+        updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i><span data-i18n="updating">업데이트 중...</span>';
+    }
     
-    // 아이콘 넣기 (로딩 표시)
-    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> 업데이트 중...';
-
-    // 환율 API 요청
-    fetch('https://api.xenia.kr/api/v1/exchange-rate/', {
-        method: 'GET',
-        headers: {
-            'accept': 'application/json'
-        }
-    })
+    // 현재 시간
+    const now = new Date().toLocaleString();
+    
+    // Exchange Rate API 사용 (USD to KRW)
+    fetch('https://api.exchangerate-api.com/v4/latest/USD')
         .then(response => response.json())
         .then(data => {
-            const rate = data.conversion_rates.KRW;
-            const now = new Date().toLocaleString();
+            // KRW 환율 가져오기
+            const rate = data.rates.KRW;
             
-            // 환율 정보 저장
+            // 스토리지에 저장
             chrome.storage.sync.set({
                 exchangeRate: rate,
                 lastUpdate: now
             }, function() {
                 // UI 업데이트
-                document.getElementById('currentRate').innerHTML = `<span class="red-rate">1</span><span class="text-xs text-gray-500 ml-1 mr-2">USD</span><span class="text-gray-500">=</span><span class="text-xl ml-2 red-rate">${Math.floor(rate).toLocaleString()}</span><span class="text-xs text-gray-500 ml-1">KRW</span>`;
+                updateRateDisplay(rate);
                 document.getElementById('lastUpdate').textContent = now;
                 
-                // 버튼 상태 복원
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-sync-alt mr-2"></i> 지금 환율 업데이트';
-                
-                // Content script에 환율 업데이트 알림
-                try {
-                    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                        if (tabs && tabs.length > 0 && tabs[0].id) {                            
-                            chrome.tabs.sendMessage(tabs[0].id, {
-                                action: 'updateExchangeRate',
-                                rate: rate
-                            }, function(response) {
-                                // 응답이 없어도 오류로 처리하지 않음
-                                if (chrome.runtime.lastError) {
-                                    console.log('메시지 전송 실패, 오류 무시: ', chrome.runtime.lastError);
-                                } else {
-                                    console.log('환율 업데이트 메시지 전송 성공');
-                                }
-                            });
-                        }
-                    });
-                } catch (err) {
-                    console.log('환율 업데이트 메시지 전송 오류 무시: ', err);
+                // 버튼 다시 활성화
+                if (updateBtn) {
+                    updateBtn.disabled = false;
+                    updateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    // 로딩 애니메이션 제거하고 원래 텍스트로 복원
+                    updateBtn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i><span data-i18n="updateRateNow">지금 환율 업데이트</span>';
+                    
+                    // 번역 적용 다시 호출 (텍스트가 변경되었으므로)
+                    if (typeof applyTranslations === 'function') {
+                        applyTranslations();
+                    }
                 }
+                
+                // content script에 메시지 전송
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        action: 'rateUpdated',
+                        rate: rate
+                    });
+                });
             });
         })
         .catch(error => {
-            console.error('환율 업데이트 실패:', error);
+            console.error('환율 정보를 가져오는 중 오류 발생:', error);
             
-            // 오류 표시
-            button.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i> 업데이트 실패';
+            // 버튼 다시 활성화
+            if (updateBtn) {
+                updateBtn.disabled = false;
+                updateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                updateBtn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i><span data-i18n="updateRateNow">지금 환율 업데이트</span>';
+                
+                // 번역 적용 다시 호출
+                if (typeof applyTranslations === 'function') {
+                    applyTranslations();
+                }
+            }
             
-            // 3초 후 버튼 상태 복원
-            setTimeout(() => {
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-sync-alt mr-2"></i> 지금 환율 업데이트';
-            }, 3000);
+            // 에러 메시지 표시 (추후 구현)
         });
 }
 
