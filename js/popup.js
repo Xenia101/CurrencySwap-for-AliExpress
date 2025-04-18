@@ -50,10 +50,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // content script에 메시지 전송
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                action: 'updateFontSize',
-                size: fontSize.value
-            });
+            if (tabs && tabs.length > 0) {
+                try {
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        action: 'updateFontSize',
+                        size: fontSize.value
+                    }).catch(error => {
+                        console.log('탭에 메시지 전송 실패: ', error);
+                    });
+                } catch (error) {
+                    console.log('메시지 전송 오류: ', error);
+                }
+            }
         });
         
         // 미리보기 업데이트
@@ -200,11 +208,19 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // content script에 메시지 전송
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                action: 'updateColors',
-                textColor: type === 'text' ? color : null,
-                bgColor: type === 'bg' ? color : null
-            });
+            if (tabs && tabs.length > 0) {
+                try {
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        action: 'updateColors',
+                        textColor: type === 'text' ? color : null,
+                        bgColor: type === 'bg' ? color : null
+                    }).catch(error => {
+                        console.log('탭에 메시지 전송 실패: ', error);
+                    });
+                } catch (error) {
+                    console.log('메시지 전송 오류: ', error);
+                }
+            }
         });
     }
 });
@@ -375,10 +391,18 @@ function resetSettings() {
         
         // content script에 메시지 전송
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                action: 'resetSettings',
-                settings: defaultSettings
-            });
+            if (tabs && tabs.length > 0) {
+                try {
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        action: 'resetSettings',
+                        settings: defaultSettings
+                    }).catch(error => {
+                        console.log('탭에 메시지 전송 실패: ', error);
+                    });
+                } catch (error) {
+                    console.log('메시지 전송 오류: ', error);
+                }
+            }
         });
         
         // 자동 환율 업데이트 설정
@@ -537,10 +561,18 @@ function updateExchangeRate() {
                 
                 // content script에 메시지 전송
                 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    chrome.tabs.sendMessage(tabs[0].id, {
-                        action: 'rateUpdated',
-                        rate: rate
-                    });
+                    if (tabs && tabs.length > 0) {
+                        try {
+                            chrome.tabs.sendMessage(tabs[0].id, {
+                                action: 'rateUpdated',
+                                rate: rate
+                            }).catch(error => {
+                                console.log('탭에 메시지 전송 실패: ', error);
+                            });
+                        } catch (error) {
+                            console.log('메시지 전송 오류: ', error);
+                        }
+                    }
                 });
             });
         })
