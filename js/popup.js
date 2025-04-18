@@ -207,33 +207,53 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
-    // 미리보기 업데이트 함수
-    function updatePreview() {
-        // 색상 가져오기
-        const textColor = textColorPicker.value;
-        const bgColor = bgColorPicker.value;
-        const fontSizeValue = fontSize.value;
-        
-        // 미리보기 요소 스타일 업데이트
-        if (previewBox) {
-            previewBox.style.backgroundColor = bgColor;
-            previewBox.style.color = textColor;
-            
-            // 글자 크기 설정
-            if (fontSizeValue === 'small') {
-                previewBox.style.fontSize = '12px';
-                previewBox.style.padding = '6px 10px';
-            } else if (fontSizeValue === 'medium') {
-                previewBox.style.fontSize = '14px';
-                previewBox.style.padding = '8px 12px';
-            } else if (fontSizeValue === 'large') {
-                previewBox.style.fontSize = '16px';
-                previewBox.style.padding = '10px 14px';
-            }
-        }
-    }
 });
+
+// 미리보기 업데이트 함수 - 전역 함수로 정의
+function updatePreview() {
+    // DOM이 완전히 로드된 후에만 실행
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updatePreview);
+        return;
+    }
+    
+    // 필요한 요소 가져오기
+    const textColorPicker = document.getElementById('textColorPicker');
+    const bgColorPicker = document.getElementById('bgColorPicker');
+    const fontSize = document.getElementById('fontSize');
+    const previewBox = document.querySelector('.preview-box');
+    
+    // 요소가 존재하지 않으면 함수 실행 중단
+    if (!textColorPicker || !bgColorPicker || !fontSize || !previewBox) {
+        console.log('미리보기 업데이트에 필요한 요소를 찾을 수 없습니다.', {
+            textColorPicker: !!textColorPicker,
+            bgColorPicker: !!bgColorPicker,
+            fontSize: !!fontSize,
+            previewBox: !!previewBox
+        });
+        return;
+    }
+    
+    const textColor = textColorPicker.value;
+    const bgColor = bgColorPicker.value;
+    const fontSizeValue = fontSize.value;
+    
+    // 미리보기 요소 스타일 업데이트
+    previewBox.style.backgroundColor = bgColor;
+    previewBox.style.color = textColor;
+    
+    // 글자 크기 설정
+    if (fontSizeValue === 'small') {
+        previewBox.style.fontSize = '12px';
+        previewBox.style.padding = '6px 10px';
+    } else if (fontSizeValue === 'medium') {
+        previewBox.style.fontSize = '14px';
+        previewBox.style.padding = '8px 12px';
+    } else if (fontSizeValue === 'large') {
+        previewBox.style.fontSize = '16px';
+        previewBox.style.padding = '10px 14px';
+    }
+}
 
 // 설정 저장
 function saveSettings(settings) {
