@@ -2,7 +2,7 @@
 
 <div align="center" style="margin-bottom:12px">
   <a href="README_kr.md">한국어</a> | 
-  <a href="README.md">English</a> | 
+  <a href="README.md">English</a>
 </div>
 
 ---
